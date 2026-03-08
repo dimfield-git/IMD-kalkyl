@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IMD-kalkyl</title>
+<style>
+:root {
+  --bg: #F5F5F5;
+  --bg-card: #FFFFFF;
+  --primary: #1B3A4B;
+  --primary-light: #2a5468;
+  --accent: #E8B630;
+  --accent-light: #f0cc6a;
+  --highlight: #D4EDDA;
+  --highlight-border: #88c999;
+  --surface-soft: #F7FAF8;
+  --surface-strong: #EEF6F0;
+  --text: #2D2D2D;
+  --text-muted: #6B7280;
+  --border: #D1D5DB;
+  --input-bg: #FFFFFF;
+  --table-header-bg: var(--primary);
+  --table-header-text: #FFFFFF;
+  --table-stripe: #f9fafb;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --error: #DC2626;
+}
+[data-theme="solcell"] {
+  --bg: #FFFFFF; --bg-card: #FFFFFF; --primary: #2E7D32; --primary-light: #43a047;
+  --accent: #F4A535; --accent-light: #f7bc64; --highlight: #FFF3E0; --highlight-border: #f4a535;
+  --surface-soft: #F7FBF4; --surface-strong: #EEF8E7;
+  --text: #333333; --text-muted: #6B7280; --border: #D1D5DB; --table-stripe: #f1f8e9;
+}
+[data-theme="blueprint"] {
+  --bg: #FAFBFC; --bg-card: #FFFFFF; --primary: #37474F; --primary-light: #546e7a;
+  --accent: #0097A7; --accent-light: #26c6da; --highlight: #E0F7FA; --highlight-border: #0097A7;
+  --surface-soft: #F5FAFB; --surface-strong: #EAF8FA;
+  --text: #37474F; --text-muted: #78909C; --border: #CFD8DC; --table-stripe: #f5f7f8;
+}
+[data-theme="koppar"] {
+  --bg: #FAF8F5; --bg-card: #FFFFFF; --primary: #6B3A2A; --primary-light: #8B5A4A;
+  --accent: #C17F4E; --accent-light: #d4a070; --highlight: #FDF0E2; --highlight-border: #C17F4E;
+  --surface-soft: #FDF9F4; --surface-strong: #F9EEE3;
+  --text: #3B2F2F; --text-muted: #7D6B6B; --border: #D9CFC5; --table-stripe: #faf6f2;
+}
+[data-theme="lovverk"] {
+  --bg: #F4F7F2; --bg-card: #FFFFFF; --primary: #3D6B4F; --primary-light: #5A8A6A;
+  --accent: #A8C256; --accent-light: #bdd474; --highlight: #E8F0DC; --highlight-border: #8aaf3e;
+  --surface-soft: #F6FAF1; --surface-strong: #EEF5E4;
+  --text: #2C3E2D; --text-muted: #6B7F6C; --border: #C5D4C0; --table-stripe: #f0f5ec;
+}
+[data-theme="kooperativ"] {
+  --bg: #FFFFFF; --bg-card: #FFFFFF; --primary: #0B0B0C; --primary-light: #1F1F22;
+  --accent: #E90016; --accent-light: #FF3B4A; --highlight: #F2F2F3; --highlight-border: #929196;
+  --surface-soft: #FAFAFA; --surface-strong: #F3F3F4;
+  --text: #0B0B0C; --text-muted: #6C6C72; --border: #D6D6D8; --input-bg: #FFFFFF;
+  --table-header-bg: var(--primary); --table-header-text: #FFFFFF; --table-stripe: #F7F7F8;
+  --shadow: 0 1px 3px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.08);
+  --shadow-lg: 0 6px 18px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.10);
+  --radius: 8px; --radius-lg: 12px; --error: #E90016;
+}
+[data-theme="midnatt"] {
+  --bg: #1A1D23; --bg-card: #242830; --primary: #7EB8DA; --primary-light: #9acae6;
+  --accent: #F0C754; --accent-light: #f5d87a; --highlight: #2A3A2E; --highlight-border: #5a9a6a;
+  --surface-soft: #262b34; --surface-strong: #2C313B;
+  --text: #E0E0E0; --text-muted: #8B92A0; --border: #363B44; --input-bg: #2C3038;
+  --table-header-bg: #A7D8A8; --table-header-text: #1A1D23; --table-stripe: #20242a; --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
+}
+[data-theme="grafit"] {
+  --bg: #1E1E22; --bg-card: #28282E; --primary: #A0D4A0; --primary-light: #b8e0b8;
+  --accent: #E8A445; --accent-light: #f0be6e; --highlight: #2E3828; --highlight-border: #6aaa6a;
+  --surface-soft: #2B2C31; --surface-strong: #313237;
+  --text: #D8D8D8; --text-muted: #888890; --border: #3A3A42; --input-bg: #303036;
+  --table-header-bg: #A7D8A8; --table-header-text: #1E1E22; --table-stripe: #24242a; --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); }
+.container { max-width: 1120px; margin: 22px auto 60px; padding: 0 16px; }
+.theme-bar { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.theme-divider { width: 1px; height: 28px; background: var(--border); margin: 0 8px; }
+.theme-btn {
+  display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: none;
+  transition: background .15s ease, transform .06s ease, border-color .15s ease;
+}
+.theme-btn:hover { border-color: var(--primary); transform: translateY(-1px); box-shadow: var(--shadow); }
+.theme-btn:active { transform: translateY(1px); }
+.theme-btn.active { background: var(--primary); color: var(--table-header-text, #fff); border-color: var(--primary); }
+.theme-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); display: inline-block; }
+.header { text-align: center; padding: 8px 0 8px; margin-bottom: 18px; }
+.header h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; color: var(--primary); margin: 6px 0 6px; }
+.header p { margin: 0 auto; max-width: 700px; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 18px 18px 16px; margin: 16px 0; }
+.card h2, .card h3 { color: var(--primary); margin: 0 0 12px; }
+.card h2 { font-size: 18px; }
+.card h3 { font-size: 16px; }
+.section-line { width: 106px; height: 4px; border-radius: 999px; background: var(--accent); margin: 0 0 18px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 12px; }
+.field { margin-bottom: 14px; }
+label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 7px; }
+input, select {
+  width: 100%; border: 1px solid var(--border); background: var(--input-bg, var(--bg-card)); color: var(--text);
+  border-radius: 12px; padding: 11px 14px; font-size: 14px; font-family: inherit;
+}
+input[readonly] { opacity: 0.9; }
+small, .help { color: var(--text-muted); display: block; margin-top: 6px; line-height: 1.45; font-size: 12px; }
+.note { font-style: italic; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  background: var(--primary); color: #fff; border: none; border-radius: 12px; padding: 12px 18px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: var(--shadow);
+}
+.btn.secondary { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+.btn.export { background: var(--primary); }
+.subcard { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 14px; padding: 16px; height: 100%; }
+.header-title { display:inline-flex; align-items:center; gap:10px; }
+.hero-icon { display:inline-block; color: var(--accent); font-size: 34px; line-height: 1; transform: translateY(-1px); }
+.result-wrap { display: none; }
+.result-block + .result-block { margin-top: 16px; }
+.result-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+.result-toolbar.end { justify-content: flex-end; }
+.result-sheet { background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; padding: 22px; box-shadow: var(--shadow-lg); }
+.result-bar-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 12px; }
+.kpi { background: var(--surface-soft); border: 1px solid var(--highlight-border); border-radius: 16px; padding: 16px; min-height: 120px; }
+.kpi .label { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+.kpi .value { font-size: 22px; font-weight: 800; color: var(--primary); line-height: 1.1; }
+.kpi .sub { color: var(--text-muted); font-size: 12px; margin-top: 7px; }
+.export-title { text-align: center; margin-bottom: 18px; }
+.export-title h2 { margin: 0 0 6px; font-size: 28px; letter-spacing: -0.02em; color: var(--primary); }
+.export-title p { margin: 0; color: var(--text-muted); font-size: 13px; }
+.report-groups { display: grid; grid-template-columns: 0.88fr 1.12fr; gap: 16px; align-items: start; }
+.result-panel { background: var(--surface-strong); border: 1px solid var(--highlight-border); border-radius: 16px; padding: 18px; }
+.result-panel h3 { margin-bottom: 14px; }
+.outcome-list { display: grid; gap: 0; }
+.outcome-row { display:grid; grid-template-columns: 1fr auto; gap:14px; padding: 12px 0; border-top:1px solid var(--border); }
+.outcome-row:first-child { border-top:none; padding-top: 0; }
+.outcome-row .name { font-size: 13px; color: var(--text-muted); }
+.outcome-row .big { font-size: 15px; font-weight: 800; color: var(--primary); text-align:right; }
+.table-wrap { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; overflow: hidden; border-radius: 12px; border: 1px solid var(--border); }
+.table thead th { background: var(--table-header-bg); color: var(--table-header-text); text-align: left; padding: 11px 12px; }
+.table tbody td { padding: 9px 12px; border-top: 1px solid var(--border); vertical-align: top; }
+.table tbody tr:nth-child(even) { background: var(--table-stripe); }
+.compact-table { font-size: 12px; }
+.compact-table tbody td { padding: 8px 10px; }
+.chart-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+.chart-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; padding: 18px; box-shadow: var(--shadow); }
+.chart-head { display:flex; justify-content: space-between; align-items:center; gap:12px; margin-bottom: 10px; }
+.chart-head h3 { margin:0; }
+.chart-wrap { height: 300px; }
+.footer { text-align: center; color: var(--text-muted); padding: 14px 0 30px; font-size: 12px; }
+.hidden { display: none !important; }
+@media (max-width: 980px) {
+  .grid-2, .grid-3, .grid-4, .grid-5, .result-bar-grid, .report-groups, .chart-grid { grid-template-columns: 1fr; }
+  .container { padding: 0 12px; }
+}
+@media print {
+  body { background: #fff; }
+  .theme-bar, .header, .card:not(.result-wrap), .footer, .result-toolbar { display: none !important; }
+  .result-wrap { display: block !important; }
+  .result-sheet, .chart-card { border: none; box-shadow: none; padding: 0; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="theme-bar">
+    <button class="theme-btn active" onclick="setTheme('nordisk')" data-theme-btn="nordisk"><span class="theme-dot" style="background:#1B3A4B"></span>Nordisk Energi</button>
+    <button class="theme-btn" onclick="setTheme('solcell')" data-theme-btn="solcell"><span class="theme-dot" style="background:#2E7D32"></span>Solcell</button>
+    <button class="theme-btn" onclick="setTheme('blueprint')" data-theme-btn="blueprint"><span class="theme-dot" style="background:#0097A7"></span>Blueprint</button>
+    <button class="theme-btn" onclick="setTheme('koppar')" data-theme-btn="koppar"><span class="theme-dot" style="background:#C17F4E"></span>Koppar</button>
+    <button class="theme-btn" onclick="setTheme('lovverk')" data-theme-btn="lovverk"><span class="theme-dot" style="background:#A8C256"></span>Lövverk</button>
+    <button class="theme-btn" onclick="setTheme('kooperativ')" data-theme-btn="kooperativ"><span class="theme-dot" style="background:#E90016"></span>Kooperativ</button>
+    <div class="theme-divider"></div>
+    <button class="theme-btn" onclick="setTheme('midnatt')" data-theme-btn="midnatt"><span class="theme-dot" style="background:#7EB8DA"></span>Midnatt</button>
+    <button class="theme-btn" onclick="setTheme('grafit')" data-theme-btn="grafit"><span class="theme-dot" style="background:#A0D4A0"></span>Grafit</button>
+  </div>
+
+  <header class="header">
+    <h1><span class="header-title"><span class="hero-icon">◎</span><span>IMD-kalkyl</span></span></h1>
+    <p>Ekonomisk kalkyl för investering i IMD i flerbostadshus</p>
+  </header>
+
+  <section class="card">
+    <h2>Förutsättningar</h2>
+    <div class="section-line"></div>
+    <div class="grid-2">
+      <div>
+        <div class="field"><label for="aptSubs">Antal lägenhetsabonnemang</label><input id="aptSubs" type="text" inputmode="numeric" placeholder="ange värde"></div>
+        <div class="field"><label for="propertySubs">Antal fastighetsabonnemang</label><input id="propertySubs" type="text" inputmode="numeric" placeholder="ange värde"></div>
+        <div class="field"><label for="propertyUse">Årsförbrukning fastighetsel (kWh/år)</label><input id="propertyUse" type="text" inputmode="numeric" placeholder="ange värde"></div>
+      </div>
+      <div>
+        <div class="field">
+          <label for="aptUse">Årsförbrukning lägenhetsel (kWh/lgh/år)</label>
+          <input id="aptUse" type="text" inputmode="numeric" value="2500">
+          <small class="note">Lägenhetsel är ett uppskattat värde. Aktuell förbrukning kan variera från fall till fall.</small>
+        </div>
+        <div class="field">
+          <label for="totalUse">Total årsförbrukning (kWh/år)</label>
+          <input id="totalUse" type="text" readonly>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Utgifter före investering</h2>
+    <div class="section-line"></div>
+    <div class="field">
+      <label for="profile">Prisprofil / Nätbolag (inkl. moms)</label>
+      <select id="profile">
+        <option value="goteborg">Göteborg Energi</option>
+        <option value="molndal">Mölndal Energi</option>
+        <option value="kungalv">Kungälv Energi</option>
+        <option value="sweden">Sverigemedel</option>
+        <option value="custom">Egna priser</option>
+      </select>
+    </div>
+    <div class="grid-2">
+      <div class="subcard">
+        <h3>Boende</h3>
+        <div class="field"><label for="resGridFixed">Nätabonnemang (kr/år)</label><input id="resGridFixed" type="text" inputmode="decimal"></div>
+        <div class="field"><label for="resSupplierFixed">Elleverantörsabonnemang (kr/år)</label><input id="resSupplierFixed" type="text" inputmode="decimal"></div>
+        <div class="field"><label for="resGridVariable">Nätöverföringsavgift Boende (kr/kWh)</label><input id="resGridVariable" type="text" inputmode="decimal"></div>
+        <div class="field"><label>Årlig kostnad Boende</label><input id="annualResCost" type="text" readonly></div>
+      </div>
+      <div class="subcard">
+        <h3>Brf / Förvaltare</h3>
+        <div class="field"><label for="brfGridFixed">Nätabonnemang (kr/år)</label><input id="brfGridFixed" type="text" inputmode="decimal"></div>
+        <div class="field"><label for="brfSupplierFixed">Elleverantörsabonnemang (kr/år)</label><input id="brfSupplierFixed" type="text" inputmode="decimal"></div>
+        <div class="field"><label for="brfGridVariable">Nätöverföringsavgift Fastighetsel (kr/kWh)</label><input id="brfGridVariable" type="text" inputmode="decimal"></div>
+        <div class="field"><label>Årlig kostnad Brf/Förvaltare</label><input id="annualBrfCost" type="text" readonly></div>
+      </div>
+    </div>
+    <div class="grid-3" style="margin-top:16px;">
+      <div class="kpi"><div class="label">Årlig kostnad Boende</div><div class="value" id="beforeResKpi">–</div></div>
+      <div class="kpi"><div class="label">Årlig kostnad Brf/Förvaltare</div><div class="value" id="beforeBrfKpi">–</div></div>
+      <div class="kpi"><div class="label">Totala utgifter före IMD</div><div class="value" id="beforeTotalKpi">–</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Tillkommande kostnader</h2>
+    <div class="section-line"></div>
+    <div class="grid-2">
+      <div class="field"><label for="effectCost">Ökade effektkostnader (kr/lgh/år)</label><input id="effectCost" type="text" inputmode="numeric" value="270"></div>
+      <div class="field"><label for="meteringCost">Mättjänstavtal och avisering (kr/lgh/år)</label><input id="meteringCost" type="text" inputmode="numeric" value="280"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Investeringskostnader och utfall</h2>
+    <div class="section-line"></div>
+    <div class="grid-2">
+      <div>
+        <div class="field"><label for="centralSubs">Antal centrala nätabonnemang efter IMD</label><input id="centralSubs" type="text" inputmode="numeric" placeholder="samma som antal fastighetsabonnemang"></div>
+        <div class="field"><label for="investmentCost">Investeringskostnad (kr inkl. moms)</label><input id="investmentCost" type="text" inputmode="decimal" placeholder="ange värde"><small class="note">inkl. eventuella arvoden och tillkommande kostnader</small></div>
+        <div class="field"><label for="discountRate">Kalkylränta (%)</label><input id="discountRate" type="text" inputmode="decimal" value="5"></div>
+      </div>
+      <div>
+        <div class="field"><label for="imdGridFixed">Kostnad nätabonnemang (kr/år)</label><input id="imdGridFixed" type="text" inputmode="decimal"></div>
+        <div class="field"><label for="imdSupplierFixed">Elleverantörsabonnemang (kr/år)</label><input id="imdSupplierFixed" type="text" inputmode="decimal"></div>
+        <div class="field"><label for="imdGridVariable">Nätöverföringsavgift total el (kr/kWh)</label><input id="imdGridVariable" type="text" inputmode="decimal"></div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Totala utgifter efter investering (kr/år)</label><input id="afterTotal" type="text" readonly></div>
+      <div class="help">Priserna är inkl. moms. Vid val <strong>Egna priser</strong> kan prisfälten redigeras manuellt.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="actions">
+      <button class="btn" id="calcBtn">Beräkna kalkyl</button>
+      <button class="btn secondary" id="resetBtn">Rensa</button>
+    </div>
+  </section>
+
+  <section class="card result-wrap" id="resultSection">
+    <h2 id="resultHeading">Resultat</h2>
+    <div class="section-line" id="resultHeadingLine"></div>
+
+    <div class="result-block">
+      <div class="result-toolbar">
+        <div class="help">Nyckeltalen exporteras som egen PNG.</div>
+        <button class="btn export" id="exportBarBtn">⬇ Exportera resultatbar</button>
+      </div>
+      <div class="result-sheet" id="resultBarArea">
+        <div class="result-bar-grid">
+          <div class="kpi"><div class="label">Årlig besparing (Netto)</div><div class="value" id="kpiSavings">–</div><div class="sub">Före IMD minus efter investering</div></div>
+          <div class="kpi"><div class="label">Återbetalningstid</div><div class="value" id="kpiPayback">–</div><div class="sub">Investeringskostnad / årlig besparing</div></div>
+          <div class="kpi"><div class="label">Mättjänstavtal och avisering</div><div class="value" id="kpiMetering">–</div><div class="sub">Årlig kostnad</div></div>
+          <div class="kpi"><div class="label">Besparing 10 år</div><div class="value" id="kpi10y">–</div><div class="sub">Diskonterad nettonytta</div></div>
+          <div class="kpi"><div class="label">Internränta över 10 år</div><div class="value" id="kpiIrr">–</div><div class="sub">Beräknad internränta</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-block">
+      <div class="result-toolbar">
+        <div class="help">Rapportdelen exporteras som PNG.</div>
+        <button class="btn export" id="exportReportBtn">⬇ Exportera rapport</button>
+      </div>
+      <div class="result-sheet" id="resultReportArea">
+        <div class="export-title">
+          <h2>Ekonomisk Kalkyl IMD</h2>
+          <p>Sammanställd resultatbild för vald kalkyl</p>
+        </div>
+        <div class="report-groups">
+          <div class="subcard table-wrap">
+            <h3>Indata</h3>
+            <table class="table compact-table">
+              <thead><tr><th>Parameter</th><th>Värde</th></tr></thead>
+              <tbody id="inputSummaryBody"></tbody>
+            </table>
+          </div>
+          <div class="result-panel">
+            <h3>Utfall</h3>
+            <div class="outcome-list" id="outcomeList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-block">
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-head">
+            <h3>Stapeldiagram över utgifter</h3>
+            <button class="btn export" id="exportBarChartBtn">⬇ Exportera diagram</button>
+          </div>
+          <div class="chart-wrap"><canvas id="costChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head">
+            <h3>Ackumulerad besparing</h3>
+            <button class="btn export" id="exportCumulativeChartBtn">⬇ Exportera diagram</button>
+          </div>
+          <div class="chart-wrap"><canvas id="cumulativeChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">IMD-kalkyl – lokal, statisk HTML</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+const DEFAULT_SUPPLIER_FIXED = 588;
+const PROFILES = {
+  goteborg: {
+    resGridFixed: 1590, resSupplierFixed: DEFAULT_SUPPLIER_FIXED, resGridVariable: 0.3750,
+    brfGridFixed: 1968, brfSupplierFixed: DEFAULT_SUPPLIER_FIXED, brfGridVariable: 0.1840,
+    imdGridFixed: 1968, imdSupplierFixed: DEFAULT_SUPPLIER_FIXED, imdGridVariable: 0.1840,
+  },
+  molndal: {
+    resGridFixed: 1830, resSupplierFixed: DEFAULT_SUPPLIER_FIXED, resGridVariable: 0.5036,
+    brfGridFixed: 3108, brfSupplierFixed: DEFAULT_SUPPLIER_FIXED, brfGridVariable: 0.4135,
+    imdGridFixed: 3108, imdSupplierFixed: DEFAULT_SUPPLIER_FIXED, imdGridVariable: 0.4135,
+  },
+  kungalv: {
+    resGridFixed: 2479, resSupplierFixed: DEFAULT_SUPPLIER_FIXED, resGridVariable: 0.6963,
+    brfGridFixed: 4230, brfSupplierFixed: DEFAULT_SUPPLIER_FIXED, brfGridVariable: 0.5266,
+    imdGridFixed: 4230, imdSupplierFixed: DEFAULT_SUPPLIER_FIXED, imdGridVariable: 0.5266,
+  },
+  sweden: {
+    resGridFixed: 1966, resSupplierFixed: DEFAULT_SUPPLIER_FIXED, resGridVariable: 0.5250,
+    brfGridFixed: 3102, brfSupplierFixed: DEFAULT_SUPPLIER_FIXED, brfGridVariable: 0.3747,
+    imdGridFixed: 3102, imdSupplierFixed: DEFAULT_SUPPLIER_FIXED, imdGridVariable: 0.3747,
+  }
+};
+
+const $ = (id) => document.getElementById(id);
+let costChart = null;
+let cumulativeChart = null;
+let lastResults = null;
+const fmt0 = (n) => new Intl.NumberFormat('sv-SE', { maximumFractionDigits: 0 }).format(Number(n) || 0);
+const fmtMoney = (n) => `${fmt0(n)} kr`;
+const fmtKwh = (n) => `${fmt0(n)} kWh`;
+const fmtRate = (n, d=1) => `${new Intl.NumberFormat('sv-SE', { minimumFractionDigits: d, maximumFractionDigits: d }).format(Number(n)||0)} %`;
+const fmtFloat = (n, d=4) => new Intl.NumberFormat('sv-SE', { minimumFractionDigits: d, maximumFractionDigits: d }).format(Number(n) || 0);
+const fmtInput = (n, d=0) => new Intl.NumberFormat('sv-SE', { minimumFractionDigits: d, maximumFractionDigits: d }).format(Number(n) || 0);
+
+function parseSvNumber(value) {
+  if (typeof value === 'number') return value;
+  let s = String(value || '').trim();
+  if (!s) return 0;
+  s = s.replace(/kr|kwh|år|%/gi, '').replace(/\s|\u00A0/g, '');
+  if (s.includes(',')) {
+    const parts = s.split(',');
+    const dec = parts.pop();
+    s = parts.join('') + '.' + dec;
+  }
+  s = s.replace(/(?!^)-/g, '').replace(/[^0-9.-]/g, '');
+  const firstDot = s.indexOf('.');
+  if (firstDot !== -1) {
+    s = s.slice(0, firstDot + 1) + s.slice(firstDot + 1).replace(/\./g, '');
+  }
+  const n = parseFloat(s);
+  return Number.isFinite(n) ? n : 0;
+}
+function num(id) { return parseSvNumber($(id).value); }
+function setVal(id, value, decimals=0) {
+  if (value === '' || value === null || value === undefined) { $(id).value = ''; return; }
+  $(id).value = fmtInput(value, decimals);
+}
+
+
+function formatOnBlur(id, decimals=0) {
+  const el = $(id);
+  el.addEventListener('blur', () => {
+    const raw = el.value.trim();
+    if (!raw) return;
+    el.value = fmtInput(parseSvNumber(raw), decimals);
+  });
+}
+
+function setTheme(name) {
+  const map = { nordisk: '', solcell: 'solcell', blueprint: 'blueprint', koppar: 'koppar', lovverk: 'lovverk', kooperativ: 'kooperativ', midnatt: 'midnatt', grafit: 'grafit' };
+  document.documentElement.setAttribute('data-theme', map[name] || '');
+  document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.themeBtn === name));
+  if (lastResults && window.Chart) buildCharts(lastResults);
+}
+
+function updateTotalUse() {
+  const propertyUse = num('propertyUse');
+  const aptUse = num('aptUse');
+  const aptSubs = num('aptSubs');
+  const hasAny = $('propertyUse').value.trim() || $('aptUse').value.trim() || $('aptSubs').value.trim();
+  const total = propertyUse + aptUse * aptSubs;
+  $('totalUse').value = hasAny ? fmt0(total) : '';
+  return total;
+}
+
+function setEditablePricing(editable) {
+  ['resGridFixed','resSupplierFixed','resGridVariable','brfGridFixed','brfSupplierFixed','brfGridVariable','imdGridFixed','imdSupplierFixed','imdGridVariable']
+    .forEach(id => $(id).readOnly = !editable);
+}
+
+function applyProfile() {
+  const profile = $('profile').value;
+  const propertySubs = Math.max(1, num('propertySubs') || 1);
+  if (profile === 'custom') {
+    setEditablePricing(true);
+    return;
+  }
+  const p = PROFILES[profile] || PROFILES.sweden;
+  setEditablePricing(false);
+  setVal('resGridFixed', p.resGridFixed, 2);
+  setVal('resSupplierFixed', p.resSupplierFixed, 2);
+  setVal('resGridVariable', p.resGridVariable, 4);
+  setVal('brfGridFixed', p.brfGridFixed, 2);
+  setVal('brfSupplierFixed', p.brfSupplierFixed, 2);
+  setVal('brfGridVariable', p.brfGridVariable, 4);
+  setVal('imdGridFixed', p.imdGridFixed, 2);
+  setVal('imdSupplierFixed', p.imdSupplierFixed, 2);
+  setVal('imdGridVariable', p.imdGridVariable, 4);
+}
+
+function calculateLive() {
+  const totalUse = updateTotalUse();
+  const aptSubs = num('aptSubs');
+  const propertySubs = num('propertySubs');
+  const aptUse = num('aptUse');
+  if (!$('centralSubs').dataset.touched && $('propertySubs').value.trim()) $('centralSubs').value = $('propertySubs').value;
+  const resCost = aptSubs * (num('resGridFixed') + num('resSupplierFixed') + num('resGridVariable') * aptUse);
+  const brfCost = propertySubs * (num('brfGridFixed') + num('brfSupplierFixed')) + num('brfGridVariable') * num('propertyUse');
+  const beforeTotal = resCost + brfCost;
+  const centralSubs = num('centralSubs');
+  const afterTotal = (centralSubs * (num('imdGridFixed') + num('imdSupplierFixed'))) + (totalUse * num('imdGridVariable')) + (aptSubs * (num('effectCost') + num('meteringCost')));
+  $('annualResCost').value = (aptSubs || aptUse) ? fmt0(resCost) : '';
+  $('annualBrfCost').value = (propertySubs || num('propertyUse')) ? fmt0(brfCost) : '';
+  $('beforeResKpi').textContent = (aptSubs || aptUse) ? fmtMoney(resCost) : '–';
+  $('beforeBrfKpi').textContent = (propertySubs || num('propertyUse')) ? fmtMoney(brfCost) : '–';
+  $('beforeTotalKpi').textContent = (beforeTotal > 0) ? fmtMoney(beforeTotal) : '–';
+  $('afterTotal').value = (afterTotal > 0 || centralSubs || totalUse) ? fmt0(afterTotal) : '';
+  return { totalUse, resCost, brfCost, beforeTotal, afterTotal };
+}
+
+function npv(rate, cashflows) {
+  return cashflows.reduce((sum, cf, i) => sum + cf / Math.pow(1 + rate, i), 0);
+}
+function irr(cashflows, guess=0.1) {
+  let rate = guess;
+  for (let i = 0; i < 120; i++) {
+    let f = 0, df = 0;
+    for (let t = 0; t < cashflows.length; t++) {
+      f += cashflows[t] / Math.pow(1 + rate, t);
+      if (t > 0) df += -t * cashflows[t] / Math.pow(1 + rate, t + 1);
+    }
+    if (Math.abs(df) < 1e-10) return null;
+    const newRate = rate - f / df;
+    if (!isFinite(newRate)) return null;
+    if (Math.abs(newRate - rate) < 1e-8) return newRate;
+    rate = newRate;
+  }
+  return null;
+}
+
+function populateSummaryRows(inputs, results) {
+  const inputRows = [
+    ['Antal lägenhetsabonnemang', inputs.aptSubs ? fmt0(inputs.aptSubs) : '–'],
+    ['Antal fastighetsabonnemang', inputs.propertySubs ? fmt0(inputs.propertySubs) : '–'],
+    ['Årsförbrukning fastighetsel', inputs.propertyUse ? fmtKwh(inputs.propertyUse) : '–'],
+    ['Årsförbrukning lägenhetsel', inputs.aptUse ? `${fmt0(inputs.aptUse)} kWh/lgh/år` : '–'],
+    ['Total årsförbrukning', inputs.totalUse ? fmtKwh(inputs.totalUse) : '–'],
+    ['Prisprofil / Nätbolag', $('profile').options[$('profile').selectedIndex].text],
+    ['Nätabonnemang Boende', fmtMoney(inputs.resGridFixed)],
+    ['Elleverantörsabonnemang Boende', fmtMoney(inputs.resSupplierFixed)],
+    ['Nätöverföringsavgift Boende', `${fmtFloat(inputs.resGridVariable,4)} kr/kWh`],
+    ['Nätabonnemang Brf/Förvaltare', fmtMoney(inputs.brfGridFixed)],
+    ['Elleverantörsabonnemang Brf/Förvaltare', fmtMoney(inputs.brfSupplierFixed)],
+    ['Nätöverföringsavgift Fastighetsel', `${fmtFloat(inputs.brfGridVariable,4)} kr/kWh`],
+    ['Ökade effektkostnader', `${fmt0(inputs.effectCost)} kr/lgh/år`],
+    ['Mättjänstavtal och avisering', `${fmt0(inputs.meteringCost)} kr/lgh/år`],
+    ['Antal centrala nätabonnemang efter IMD', inputs.centralSubs ? fmt0(inputs.centralSubs) : '–'],
+    ['Investeringskostnad', inputs.investmentCost ? fmtMoney(inputs.investmentCost) : '–'],
+    ['Kalkylränta', fmtRate(inputs.discountRate * 100, 1)],
+    ['Kostnad nätabonnemang efter IMD', fmtMoney(inputs.imdGridFixed)],
+    ['Elleverantörsabonnemang efter IMD', fmtMoney(inputs.imdSupplierFixed)],
+    ['Nätöverföringsavgift total el', `${fmtFloat(inputs.imdGridVariable,4)} kr/kWh`],
+  ];
+  $('inputSummaryBody').innerHTML = inputRows.map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+
+  const outcomes = [
+    ['Årlig kostnad Boende', fmtMoney(results.resCost)],
+    ['Årlig kostnad Brf/Förvaltare', fmtMoney(results.brfCost)],
+    ['Totala utgifter före IMD', fmtMoney(results.beforeTotal)],
+    ['Totala utgifter efter investering', fmtMoney(results.afterTotal)],
+    ['Årlig besparing (Netto)', fmtMoney(results.netSavings)],
+    ['Mättjänstavtal och avisering', fmtMoney(results.meteringAnnual)],
+    ['Återbetalningstid', results.paybackText],
+    ['Besparing 10 år', fmtMoney(results.tenYearBenefit)],
+    ['Internränta över 10 år', results.irrText],
+  ];
+  $('outcomeList').innerHTML = outcomes.map(([name, big]) => `
+    <div class="outcome-row">
+      <div class="name">${name}</div>
+      <div class="big">${big}</div>
+    </div>
+  `).join('');
+}
+
+
+function ensureChartJs() {
+  return new Promise((resolve, reject) => {
+    if (window.Chart) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('Kunde inte ladda Chart.js.'));
+    document.head.appendChild(s);
+  });
+}
+
+function buildCharts(results) {
+  const styles = getComputedStyle(document.documentElement);
+  const primary = styles.getPropertyValue('--primary').trim() || '#1B3A4B';
+  const accent = styles.getPropertyValue('--accent').trim() || '#E8B630';
+  const border = styles.getPropertyValue('--border').trim() || '#D1D5DB';
+  const text = styles.getPropertyValue('--text').trim() || '#2D2D2D';
+  const muted = styles.getPropertyValue('--text-muted').trim() || '#6B7280';
+  const highlight = styles.getPropertyValue('--highlight-border').trim() || '#88c999';
+
+  if (costChart) costChart.destroy();
+  if (cumulativeChart) cumulativeChart.destroy();
+
+  costChart = new Chart($('costChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Före IMD', 'Efter investering', 'Årlig besparing'],
+      datasets: [{
+        data: [results.beforeTotal, results.afterTotal, Math.max(results.netSavings, 0)],
+        backgroundColor: [primary, accent, highlight],
+        borderColor: [primary, accent, highlight],
+        borderWidth: 1,
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { color: muted, callback: (v) => fmt0(v) }, grid: { color: border } },
+        x: { ticks: { color: text }, grid: { display: false } }
+      }
+    }
+  });
+
+  const labels = [];
+  const cumulative = [];
+  let running = -results.investmentCost;
+  for (let year = 0; year <= 10; year++) {
+    labels.push(`År ${year}`);
+    if (year === 0) {
+      cumulative.push(running);
+    } else {
+      running += results.netSavings;
+      cumulative.push(running);
+    }
+  }
+
+  cumulativeChart = new Chart($('cumulativeChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: cumulative,
+        borderColor: primary,
+        backgroundColor: highlight,
+        tension: 0.25,
+        fill: false,
+        pointRadius: 3,
+        pointHoverRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { color: muted, callback: (v) => fmt0(v) }, grid: { color: border } },
+        x: { ticks: { color: text }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+async function calculateResult() {
+  const live = calculateLive();
+  const inputs = {
+    aptSubs: num('aptSubs'), propertySubs: num('propertySubs'), propertyUse: num('propertyUse'), aptUse: num('aptUse'), totalUse: live.totalUse,
+    resGridFixed: num('resGridFixed'), resSupplierFixed: num('resSupplierFixed'), resGridVariable: num('resGridVariable'),
+    brfGridFixed: num('brfGridFixed'), brfSupplierFixed: num('brfSupplierFixed'), brfGridVariable: num('brfGridVariable'),
+    effectCost: num('effectCost'), meteringCost: num('meteringCost'), centralSubs: num('centralSubs'), investmentCost: num('investmentCost'), discountRate: num('discountRate')/100,
+    imdGridFixed: num('imdGridFixed'), imdSupplierFixed: num('imdSupplierFixed'), imdGridVariable: num('imdGridVariable')
+  };
+  const meteringAnnual = inputs.aptSubs * inputs.meteringCost;
+  const netSavings = live.beforeTotal - live.afterTotal;
+  const payback = netSavings > 0 ? inputs.investmentCost / netSavings : null;
+  const cashflows = [-inputs.investmentCost, ...Array(10).fill(netSavings)];
+  const tenYearBenefit = npv(inputs.discountRate, cashflows);
+  const irrValue = irr(cashflows, 0.1);
+  const results = {
+    ...live, investmentCost: inputs.investmentCost, meteringAnnual, netSavings, tenYearBenefit,
+    paybackText: payback && isFinite(payback) ? `${new Intl.NumberFormat('sv-SE',{minimumFractionDigits:1,maximumFractionDigits:1}).format(payback)} år` : 'Ej lönsam',
+    irrText: irrValue !== null && isFinite(irrValue) ? fmtRate(irrValue*100,1) : 'Ej definierad'
+  };
+  $('kpiSavings').textContent = fmtMoney(netSavings);
+  $('kpiPayback').textContent = results.paybackText;
+  $('kpiMetering').textContent = fmtMoney(meteringAnnual);
+  $('kpi10y').textContent = fmtMoney(tenYearBenefit);
+  $('kpiIrr').textContent = results.irrText;
+  populateSummaryRows(inputs, results);
+  $('resultSection').style.display = 'block';
+  lastResults = results;
+  try { await ensureChartJs(); buildCharts(results); } catch (e) {}
+}
+
+function getExportBackground(node) {
+  const bg = window.getComputedStyle(node).backgroundColor;
+  return bg && bg !== 'rgba(0, 0, 0, 0)' ? bg : '#ffffff';
+}
+
+async function ensureHtml2Canvas() {
+  if (window.html2canvas) return;
+  await new Promise((resolve, reject) => {
+    const existing = Array.from(document.scripts).find(s => (s.src || '').includes('html2canvas'));
+    if (existing) {
+      existing.addEventListener('load', resolve, { once: true });
+      existing.addEventListener('error', () => reject(new Error('Kunde inte ladda html2canvas.')), { once: true });
+      if (window.html2canvas) resolve();
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Kunde inte ladda html2canvas.'));
+    document.head.appendChild(s);
+  });
+}
+
+async function exportNodeAsPng(node, filename) {
+  try {
+    await ensureHtml2Canvas();
+    const canvas = await window.html2canvas(node, {
+      backgroundColor: getExportBackground(node),
+      scale: Math.max(2, window.devicePixelRatio || 1),
+      useCORS: true,
+      logging: false
+    });
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (err) {
+    console.error(err);
+    alert('PNG-export misslyckades.');
+  }
+}
+
+function exportCanvas(canvasId, filename) {
+  const canvas = $(canvasId);
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function resetForm() {
+  setVal('aptSubs', '');
+  setVal('propertySubs', '');
+  setVal('propertyUse', '');
+  setVal('aptUse', 2500);
+  $('profile').value = 'goteborg';
+  setVal('effectCost', 270);
+  setVal('meteringCost', 280);
+  setVal('investmentCost', '');
+  setVal('discountRate', 5);
+  $('centralSubs').value = '';
+  $('centralSubs').dataset.touched = '';
+  $('resultSection').style.display = 'none';
+  applyProfile();
+  updateTotalUse();
+  calculateLive();
+}
+
+$('profile').addEventListener('change', () => { applyProfile(); calculateLive(); });
+$('propertySubs').addEventListener('input', () => { if (!$('centralSubs').dataset.touched) $('centralSubs').value = $('propertySubs').value; calculateLive(); });
+$('centralSubs').addEventListener('input', () => { $('centralSubs').dataset.touched = '1'; calculateLive(); });
+['aptSubs','propertyUse','aptUse','resGridFixed','resSupplierFixed','resGridVariable','brfGridFixed','brfSupplierFixed','brfGridVariable','effectCost','meteringCost','investmentCost','discountRate','imdGridFixed','imdSupplierFixed','imdGridVariable'].forEach(id => $(id).addEventListener('input', calculateLive));
+['resGridFixed','resSupplierFixed','brfGridFixed','brfSupplierFixed','imdGridFixed','imdSupplierFixed','investmentCost'].forEach(id => formatOnBlur(id, 2));
+['resGridVariable','brfGridVariable','imdGridVariable'].forEach(id => formatOnBlur(id, 4));
+['aptSubs','propertySubs','propertyUse','aptUse','effectCost','meteringCost','centralSubs'].forEach(id => formatOnBlur(id, 0));
+formatOnBlur('discountRate', 1);
+
+$('calcBtn').addEventListener('click', calculateResult);
+$('resetBtn').addEventListener('click', resetForm);
+$('exportBarBtn').addEventListener('click', () => exportNodeAsPng($('resultBarArea'), 'imd-kalkyl-resultatbar.png'));
+$('exportReportBtn').addEventListener('click', () => exportNodeAsPng($('resultReportArea'), 'imd-kalkyl-rapport.png'));
+$('exportBarChartBtn').addEventListener('click', () => exportCanvas('costChart', 'imd-kalkyl-utgifter-diagram.png'));
+$('exportCumulativeChartBtn').addEventListener('click', () => exportCanvas('cumulativeChart', 'imd-kalkyl-ackumulerad-besparing.png'));
+
+setTheme('nordisk');
+resetForm();
+</script>
+</body>
+</html>
